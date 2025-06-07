@@ -135,7 +135,7 @@ classdef SimulateRocket < handle
         % --- plotResults Method ---
         % This method plots the simulation history.
         function plotResults(simulation)
-            figure(Name = ['Rocket Simulation Results - ' simulation.rocket.name] );
+            figure('Name', ['Rocket Simulation Results - ' simulation.rocket.name]);
 
             subplot(4,1,1);
             plot(simulation.simHistory.time, simulation.simHistory.altitude/1000, 'b-');
