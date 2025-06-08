@@ -25,7 +25,7 @@ fsolve_objective = @(v_test) local_residual_calculator(rocket_obj, v_test, dt);
 % Set options if you want to suppress fsolve's output for cleaner console
 optimal_v = fsolve(fsolve_objective, rocket_obj.velocity); % Pass initial guess and options
 
-fprintf('Optimal velocity found by fsolve: %.15f m/s\n', optimal_v);
+fprintf('Optimal velocity found by fsolve: %.17f m/s\n', optimal_v);
 
 end % End of main solveRocket function
 
@@ -33,20 +33,18 @@ end % End of main solveRocket function
 % --- Local Helper Function ---
 % This function performs the residual calculation for fsolve.
 function residual_val = local_residual_calculator(rocket_obj_for_solve, v_test, dt)
-% Store the original velocity of the rocket object
-original_rocket = rocket_obj_for_solve;
-
 % Temporarily set the rocket's velocity to the value fsolve is currently testing
+
+v_o = rocket_obj_for_solve.velocity;
+
+
 rocket_obj_for_solve.velocity = v_test;
 
-rocket_obj_for_solve = rocket_obj_for_solve.updateState(dt);
 % Calculate the residual: (LHS - RHS)
 % This is the equation fsolve tries to make zero.
 residual_val = rocket_obj_for_solve.F_net - ...
-    rocket_obj_for_solve.rateOfChangeOfMomentum(original_rocket.velocity, dt);
+    rocket_obj_for_solve.rateOfChangeOfMomentum(v_o, dt);
     
-rocket_obj_for_solve = original_rocket; %#ok<NASGU>
-
 % IMPORTANT: Restore the rocket's velocity to its original state.
 % This ensures that the 'rocket_obj_for_solve' object's velocity property
 % isn't left at some intermediate test value by fsolve's internal probing,
