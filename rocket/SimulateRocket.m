@@ -65,7 +65,7 @@ classdef SimulateRocket < handle
                 % (e.g., if it hits ground with negative velocity)
 
                 % --- Update the Rocket's State ---
-                simulation.rocket.updateState(simulation.timeStep);
+                simulation.rocket = simulation.rocket.updateState(simulation.timeStep);
 
                 % --- Store history for plotting ---
                 % Append the *new* state (after update) and the *calculated* acceleration/net force

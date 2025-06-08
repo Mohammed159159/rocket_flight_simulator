@@ -1,4 +1,4 @@
-classdef Rocket < handle
+classdef Rocket
     % Rocket: Defines the rocket's properties and methods for calculations and state updates.
 
     properties
@@ -112,7 +112,7 @@ classdef Rocket < handle
 
         % --- Method to Update Rocket's State for Simulation ---
         % Updates the rocket's dynamic parameters (mass, velocity, altitude, and time, etc.)
-        function updateState(rocket, dt)
+        function rocket_obj = updateState(rocket, dt)
             % --- Calculate variables for next state ---
 
             % 1. Update altitude using velocity and acceleration of previous state
@@ -152,6 +152,8 @@ classdef Rocket < handle
 
             % 8. Update acceleration
             rocket.acceleration = rocket.F_net / rocket.mass;
+
+            rocket_obj = rocket;
         end
 
     end % methods
