@@ -26,9 +26,6 @@ classdef SimulateRocket < handle
                 simulation.timeStep = time_step_input;
             end
 
-            % Set the time step of the rokcet instance to simulation's time step
-            simulation.rocket.dt = simulation.timeStep;
-
             % Initialize simHistory structure with the rocket's initial state
             simulation.simHistory = struct();
 
@@ -88,10 +85,10 @@ classdef SimulateRocket < handle
                 simulation.simHistory.weight = [simulation.simHistory.weight; simulation.rocket.W];
 
                 % --- Check for Ground Impact (if needed) ---
-                if simulation.rocket.altitude <= 0 && simulation.rocket.time > simulation.timeStep % Avoid breaking on initial t=0, h=0
-                    fprintf('Rocket hit ground at %.1f s. Simulation ended.\n', simulation.rocket.time);
-                    break; % Exit loop if rocket hits ground
-                end
+                % if simulation.rocket.altitude <= 0 && (simulation.rocket.time > simulation.timeStep) % Avoid breaking on initial t=0, h=0
+                %     fprintf('Rocket hit ground at %.1f s. Simulation ended.\n', simulation.rocket.time);
+                %     break; % Exit loop if rocket hits ground
+                % end
 
                 % --- Display progress (optional) ---
                 % The modulo condition ensures printing roughly every 10 seconds.

@@ -1,4 +1,4 @@
-function optimal_v = solveRocket(rocket_obj_handle)
+function optimal_v = solveRocket(rocket_obj_handle, dt)
 % solveRocket: Solves for the rocket_obj_handle velocity where LHS = RHS
 %                of the rocket_obj_handle equation using fsolve.
 %
@@ -8,17 +8,18 @@ function optimal_v = solveRocket(rocket_obj_handle)
 %                       will be temporarily modified by the objective function
 %                       during the solve process.
 %   initial_v_guess   : An initial guess for the velocity (m/s) for fsolve.
+%   dt                : A time step value after which the velocity is calculated.
 %
 % Output:
 %   optimal_v         : The velocity (m/s) at which the rocket_obj_handle equation is balanced.
 
-fprintf('Solving for velocity after dt using fsolve...\n');
+fprintf('Solving for velocity after dt=%.2f using fsolve...\n', dt);
 
 % Define the objective function for fsolve.
 % This anonymous function calls a local helper function (defined below)
 % to calculate the residual. This is clean and keeps the velocity
 % management isolated.
-fsolve_objective = @(v_test) local_residual_calculator(rocket_obj_handle, v_test);
+fsolve_objective = @(v_test) local_residual_calculator(rocket_obj_handle, v_test, dt);
 
 % Call fsolve to find the optimal initial velocity
 % Set options if you want to suppress fsolve's output for cleaner console
@@ -31,22 +32,24 @@ end % End of main solveRocket function
 
 % --- Local Helper Function ---
 % This function performs the residual calculation for fsolve.
-% It's defined within the same solveRocket.m file but outside the main function.
-function residual_val = local_residual_calculator(rocket_handle_for_solve, v_test)
-    % Store the original velocity of the rocket object
-    original_velocity = rocket_handle_for_solve.velocity;
+function residual_val = local_residual_calculator(rocket_handle_for_solve, v_test, dt)
+% Store the original velocity of the rocket object
+original_rocket = rocket_handle_for_solve;
 
-    % Temporarily set the rocket's velocity to the value fsolve is currently testing
-    rocket_handle_for_solve.velocity = v_test;
+% Temporarily set the rocket's velocity to the value fsolve is currently testing
+rocket_handle_for_solve.velocity = v_test;
 
-    % Calculate the residual: (LHS - RHS)
-    % This is the equation fsolve tries to make zero.
-    residual_val = rocket_handle_for_solve.netForce() - ...
-                   rocket_handle_for_solve.rateOfChangeOfMomentum();
+rocket_handle_for_solve.updateState(dt);
+% Calculate the residual: (LHS - RHS)
+% This is the equation fsolve tries to make zero.
+residual_val = rocket_handle_for_solve.F_net - ...
+    rocket_handle_for_solve.rateOfChangeOfMomentum(original_rocket.velocity, dt);
+    
+rocket_handle_for_solve = original_rocket; %#ok<NASGU>
 
-    % IMPORTANT: Restore the rocket's velocity to its original state.
-    % This ensures that the 'rocket_handle_for_solve' object's velocity property
-    % isn't left at some intermediate test value by fsolve's internal probing,
-    % but is ready for the final optimal value to be assigned later.
-    rocket_handle_for_solve.velocity = original_velocity;
+% IMPORTANT: Restore the rocket's velocity to its original state.
+% This ensures that the 'rocket_handle_for_solve' object's velocity property
+% isn't left at some intermediate test value by fsolve's internal probing,
+% but is ready for the final optimal value to be assigned later.
+
 end
