@@ -30,7 +30,7 @@ These instructions will get you a copy of the project up and running on your loc
 2.  **Add project to MATLAB/Octave Path:**
     Open MATLAB/Octave, navigate to the `rocket_flight_simulator` directory, and run `startup.m`.
 
-    Alternativelt you can add the path of the `rocket_flight_simulator` directory (and its subfolders, if any are added later) to your path using the following command:
+    Alternatively you can add the path of the `rocket_flight_simulator` directory (and its subfolders, if any are added later) to your path using the following command:
     ```matlab
     addpath(genpath(pwd)); % Adds current directory and all subfolders to path
     ```
